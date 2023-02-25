@@ -2,11 +2,11 @@ const jwt = require('jsonwebtoken');
 const secret = process.env.JWT_SECRET;
 
 const auth = async (req, res, next) => {
-    const token = req.header('Authorization').replace('Bearer ', '')
-    if (!token) return res.status(401).json({ message: 'No token, authorization denied' })
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
     try {
         // Verify token
-        const decoded = jwt.verify(token, secret)
+        const decoded = jwt.verify(token, secret);
         // Add user from payload
         req.user = decoded;
         next() // pass along to next handler

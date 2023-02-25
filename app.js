@@ -34,7 +34,7 @@ app.use('/api/users/', users);
 app.use('/api/posts/', posts);
 app.use('/api', authRoutes);
 app.use('/api/comments', commentsRoute);
-app.use('/todo', todoRoutes);
+app.use('/api/todo', todoRoutes);
 app.use('/', (req,res)=> {res.send(`Welcome to what-todo Social media app`)})
 
 // start listening & inform user

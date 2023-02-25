@@ -41,11 +41,11 @@ class TodoService {
         try {
             console.info('----- In createTodo method -----');
             if (!title) {
-                return res.status(400).json({ message: 'Please enter title' });
+                return res.status(400).json({ message: 'Please enter title to create todo' });
             }
 
             // User should be signed up to login
-            const checkForDuplicateTodo = await User.findOne({ title });
+            const checkForDuplicateTodo = await Todo.findOne({ title });
             if (checkForDuplicateTodo) return res.status(400).json({ messsage: 'Title already exists.' });
 
             const newTodo = new Todo({ title });
