@@ -70,12 +70,13 @@ class UserService {
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
 
-            jwt.sign({ id: user.id, username: user.username }, jwtSecret, { expiresIn: 3600 },
+            jwt.sign({ id: user.id, username: user.username, role: user.role }, jwtSecret, { expiresIn: 3600 },
                 (err, token) => {
                     if (err) throw err;
                     return res.json({ 
                         token, 
-                        username: user.username
+                        username: user.username,
+                        role: user.role
                     });
                 }
             );
