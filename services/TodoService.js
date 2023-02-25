@@ -22,7 +22,7 @@ class TodoService {
             }
             
             return res.status(200).json({
-                getTodos,
+                todos: getTodos,
                 count: Object.keys(getTodos).length
             });
         } catch (err) {
