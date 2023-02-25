@@ -6,29 +6,56 @@ const TodoService = require('../services/TodoService');
  * @author Akshay Shahi
  */
 
-// @route   GET /todo
-// @desc    Get All Todos
-// @access  Public
+/**
+ * @route           GET /todo
+ * @description     Get all Todo
+ * @access          No-auth route
+ */
 router.get('/', (req, res) => {
     const todoServiceInst = new TodoService();
     return todoServiceInst.getAllTodos(res);
 });
 
-// @route   POST /todo
-// @desc    Create new Todo
-// @access  Private
+/**
+ * @route           POST /todo
+ * @description     Create a Todo
+ * @access          Protected route
+ */
 router.post('/', auth, (req, res) => {
     const todoServiceInst = new TodoService();
-    return todoServiceInst.createTodo(req.body.title, res);
+    return todoServiceInst.createTodo(req.user.id, req.body.title, res);
 })
 
-// @route   DELETE /todo/:id
-// @desc    Delete a Todo
-// @access  Private
+/**
+ * @route           GET /todo/:id
+ * @description     Get a Todo
+ * @access          No-Auth route
+ */
+router.get('/:id', async (req, res) => {
+    const todoServiceInst = new TodoService();
+    return todoServiceInst.getTodoByID(req.params.id, res);
+});
+
+/**
+ * @route           DELETE /todo/:id
+ * @description     Delete a Todo
+ * @access          Protected route
+ */
 router.delete('/:id', auth, (req, res) => {
-  Todo.findById(req.params.id)
-    .then(item => item.remove().then(() => res.json({ success: true })))
-    .catch(err => res.status(404).json({ success: false }));
+    const todoServiceInst = new TodoService();
+    console.log(req.user);
+    return todoServiceInst.deleteTodoByID(req.user.id, req.user.role, req.params.id, res);
 })
 
-module.exports = router
+/**
+ * @route           PATCH /todo/:id
+ * @description     Update a Todo
+ * @access          Protected route
+ */
+router.patch('/:id', auth, (req, res) => {
+    const todoServiceInst = new TodoService();
+    console.log(req.user);
+    return todoServiceInst.updateTodoByID(req.user.id, req.user.role, req.params.id, req.body, res);
+})
+
+module.exports = router;
