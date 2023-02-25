@@ -14,6 +14,13 @@ const PostSchema = new mongoose.Schema(
     is_completed: {
       type: Boolean,
       default: false
+    },
+    created_by: {
+      type: String
+    },
+    creator_isAdmin: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }

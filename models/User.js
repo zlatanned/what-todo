@@ -18,9 +18,9 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    isAdmin: {
-      type: Boolean,
-      default: false
+    role: {
+      type: String,
+      default: "member"
     }
   },
   { timestamps: true }
