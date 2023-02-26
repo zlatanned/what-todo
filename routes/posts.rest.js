@@ -14,9 +14,7 @@ const auth = require('../middleware/auth');
  */
 router.get('/', async (req, res) => {
   const postServiceInst = new PostService();
-  let page = req.query.page ?? 1;
-  let limit = req.query.limit ?? 10;
-  await postServiceInst.getAllPosts(page, limit, res);
+  await postServiceInst.getAllPosts(req.query, res);
 });
 
 /**

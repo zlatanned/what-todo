@@ -1,4 +1,5 @@
 const Post = require('../models/Post');
+const Utility = require('../utility/Utility');
 
 /**
  * @author Akshay Shahi
@@ -7,17 +8,37 @@ const Post = require('../models/Post');
 class PostService {
 
     /**
-     * @description Method responsible for getting all Posts
-     * @param {Number} pageNumber page Number
-     * @param {Number} pageSize Page size
-     * @param {Object} res 
-     * @returns 
+     * @constructor Creates an instance of the PostService
+     * @param {Utility} utility
+     * @memberof CommentService
      */
-    async getAllPosts(pageNumber, pageSize, res) {
+    constructor(utility) {
+        this.utility = utility || new Utility();
+    }
+
+    /**
+     * @description Method responsible for getting all Posts
+     * @param {Object} reqQuery Request Query Object
+     * @param {Object} res
+     * @returns {Object}
+     * @memberof PostService
+     */
+    async getAllPosts(reqQuery, res) {
         try {
             console.info('----- In getAllPosts method -----');
-            const getPosts = await Post.find().skip((pageNumber * pageSize) - pageSize).limit(pageSize);
-            const count = await Post.find().countDocuments()
+
+            // Preparing pageNumber, pageSize for PAGINATION
+            let pageNumber = reqQuery.page ?? 1;
+            let pageSize = reqQuery.limit ?? 10;
+
+            const filterData = {};
+
+            // Preparing Filter Data for QUERYING
+            this.utility.prepareFilterData(reqQuery, filterData);
+
+            // Using .find().lean instead of .find() for faster Querying
+            const getPosts = await Post.find(filterData).lean().skip((pageNumber * pageSize) - pageSize).limit(pageSize);
+            const totalCount = await Post.find().lean().countDocuments()
             if (!getPosts) {
                 return res.status(400).json({
                     message: "No Posts to retrieve"
@@ -26,7 +47,7 @@ class PostService {
             
             return res.status(200).json({
                 comments: getPosts,
-                count: count,
+                total_count: totalCount,
                 page_number: pageNumber,
                 page_size: pageSize
             });
@@ -38,8 +59,9 @@ class PostService {
 
     /**
      * @description Method responsible for getting Post by id
-     * @param {Object} res 
-     * @returns 
+     * @param {Object} res
+     * @returns {Object}
+     * @memberof PostService
      */
     async getPostByID(id, res) {
         try {
@@ -57,7 +79,8 @@ class PostService {
      * @param {String} description description of post
      * @param {String} userID user id
      * @param {Object} res response object
-     * @returns
+     * @returns {Object}
+     * @memberof PostService
      */
     async createPost(userID, description, res) {
         try {
@@ -83,7 +106,8 @@ class PostService {
      * @param {String} userRole user role
      * @param {String} id Post id
      * @param {Object} res response object
-     * @returns
+     * @returns {Object}
+     * @memberof PostService
      */
     async deletePostByID(userID, userRole, id, res) {
         try {
@@ -115,7 +139,8 @@ class PostService {
      * @param {String} id Post id
      * @param {Object} data JSON of paramters to be updated
      * @param {Object} res response object
-     * @returns
+     * @returns {Object}
+     * @memberof PostService
      */
     async updatePostByID (userID, userRole, id, data, res) {
         try {

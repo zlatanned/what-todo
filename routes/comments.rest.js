@@ -23,9 +23,7 @@ router.post('/:post_id', auth, (req, res) => {
 */
 router.get('/:post_id', async (req, res) => {
   const commentServiceInst = new CommentService();
-  let page = req.query.page ?? 1;
-  let limit = req.query.limit ?? 10;
-  return commentServiceInst.getCommentsOnPost(req.params.post_id, page, limit, res);
+  return commentServiceInst.getCommentsOnPost(req.params.post_id, req.query, res);
 });
 
 module.exports = router;

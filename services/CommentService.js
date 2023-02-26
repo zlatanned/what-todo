@@ -1,5 +1,6 @@
 const Comment = require('../models/Comment');
 const Post = require('../models/Post');
+const Utility = require('../utility/Utility');
 
 /**
  * @author Akshay Shahi
@@ -8,18 +9,44 @@ const Post = require('../models/Post');
 class CommentService {
 
     /**
+     * @constructor Creates an instance of the CommentService
+     * @param {Utility} utility
+     * @memberof CommentService
+     */
+    constructor(utility) {
+        this.utility = utility || new Utility();
+    }
+
+    /**
      * @description Method responsible for getting all comments on a post
      * @param {String} postID ID of post on which comment will be retrieved
-     * @param {Number} pageNumber page Number
-     * @param {Number} pageSize Page size
-     * @param {Object} res 
-     * @returns 
+     * @param {Object} reqQuery Request Query Object
+     * @param {Object} res
+     * @returns {Object}
+     * @memberof CommentService
      */
-    async getCommentsOnPost(postID, pageNumber, pageSize, res) {
+    async getCommentsOnPost(postID, reqQuery, res) {
         try {
             console.info('----- In getCommentsOnPost method -----');
-            const getCommentsOnPost = await Comment.find({ post_id: postID }).skip((pageNumber * pageSize) - pageSize).limit(pageSize);
-            const count = await Comment.find({ post_id: postID }).countDocuments()
+
+            if(!this.utility.checkIfValidObjectID(postID)) {
+                return res.status(400).json({
+                    message: "Post ID should be a valid Mongo ObjectID"
+                });
+            };
+
+            // Preparing pageNumber, pageSize for PAGINATION
+            let pageNumber = reqQuery.page ?? 1;
+            let pageSize = reqQuery.limit ?? 10;
+
+            const filterData = {post_id: postID};
+
+            // Preparing Filter Data for QUERYING
+            this.utility.prepareFilterData(reqQuery, filterData);
+
+            // Using .find().lean instead of .find() for faster Querying
+            const getCommentsOnPost = await Comment.find(filterData).lean().skip((pageNumber * pageSize) - pageSize).limit(pageSize);
+            const totalCount = await Comment.find({ post_id: postID }).lean().countDocuments()
             if (!getCommentsOnPost) {
                 return res.status(400).json({
                     message: "No Comments/Post to retrieve"
@@ -28,7 +55,7 @@ class CommentService {
             
             return res.status(200).json({
                 comments: getCommentsOnPost,
-                count: count,
+                total_count: totalCount,
                 page_number: pageNumber,
                 page_size: pageSize
             });
@@ -44,7 +71,8 @@ class CommentService {
      * @param {String} userID userID of person that added the comment
      * @param {Object} data Comment data
      * @param {Object} res response object
-     * @returns
+     * @returns {Object}
+     * @memberof CommentService
      */
     async addCommentOnPost(postID, userID, data, res) {
         try {

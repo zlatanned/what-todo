@@ -1,4 +1,5 @@
 const Todo = require('../models/Todo');
+const Utility = require('../utility/Utility');
 
 /**
  * @author Akshay Shahi
@@ -7,17 +8,36 @@ const Todo = require('../models/Todo');
 class TodoService {
 
     /**
-     * @description Method responsible for getting all todos
-     * @param {Number} pageNumber page Number
-     * @param {Number} pageSize Page size
-     * @param {Object} res 
-     * @returns 
+     * @constructor Creates an instance of the CommentService
+     * @param {Utility} utility
+     * @memberof TodoService
      */
-    async getAllTodos(pageNumber, pageSize, res) {
+    constructor(utility) {
+        this.utility = utility || new Utility();
+    }
+
+    /**
+     * @description Method responsible for getting all todos
+     * @param {Object} reqQuery Request Query Object
+     * @param {Object} res
+     * @returns {Object}
+     * @memberof TodoService
+     */
+    async getAllTodos(reqQuery, res) {
         try {
             console.info('----- In getAllTodos method -----');
-            const getTodos = await Todo.find().skip((pageNumber * pageSize) - pageSize).limit(pageSize);
-            const count = await Todo.find().countDocuments();
+            // Preparing pageNumber, pageSize for PAGINATION
+            let pageNumber = reqQuery.page ?? 1;
+            let pageSize = reqQuery.limit ?? 10;
+
+            const filterData = {};
+
+            // Preparing Filter Data for QUERYING
+            this.utility.prepareFilterData(reqQuery, filterData);
+
+            // Using .find().lean instead of .find() for faster Querying
+            const getTodos = await Todo.find(filterData).lean().skip((pageNumber * pageSize) - pageSize).limit(pageSize);
+            const totalCount = await Todo.find().lean().countDocuments();
             if (!getTodos) {
                 return res.status(400).json({
                     message: "No Todos to retrieve"
@@ -26,7 +46,7 @@ class TodoService {
             
             return res.status(200).json({
                 comments: getTodos,
-                count: count,
+                total_count: totalCount,
                 page_number: pageNumber,
                 page_size: pageSize
             });
@@ -38,8 +58,9 @@ class TodoService {
 
     /**
      * @description Method responsible for getting todo by id
-     * @param {Object} res 
-     * @returns 
+     * @param {Object} res
+     * @returns {Object}
+     * @memberof TodoService
      */
     async getTodoByID(id, res) {
         try {
@@ -57,7 +78,8 @@ class TodoService {
      * @param {String} title title of todo (has to be unique)
      * @param {String} userID user id
      * @param {Object} res response object
-     * @returns
+     * @returns {Object}
+     * @memberof TodoService
      */
     async createTodo(userID, title, res) {
         try {
@@ -87,7 +109,8 @@ class TodoService {
      * @param {String} userRole user role
      * @param {String} id Todo id
      * @param {Object} res response object
-     * @returns
+     * @returns {Object}
+     * @memberof TodoService
      */
     async deleteTodoByID(userID, userRole, id, res) {
         try {
@@ -119,7 +142,8 @@ class TodoService {
      * @param {String} id Todo id
      * @param {Object} data JSON of paramters to be updated
      * @param {Object} res response object
-     * @returns
+     * @returns {Object}
+     * @memberof TodoService
      */
     async updateTodoByID (userID, userRole, id, data, res) {
         try {

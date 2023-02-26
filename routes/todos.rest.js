@@ -13,9 +13,7 @@ const TodoService = require('../services/TodoService');
  */
 router.get('/', (req, res) => {
     const todoServiceInst = new TodoService();
-    let page = req.query.page ?? 1;
-    let limit = req.query.limit ?? 10;
-    return todoServiceInst.getAllTodos(page, limit, res);
+    return todoServiceInst.getAllTodos(req.query, res);
 });
 
 /**
