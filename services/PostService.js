@@ -8,13 +8,16 @@ class PostService {
 
     /**
      * @description Method responsible for getting all Posts
+     * @param {Number} pageNumber page Number
+     * @param {Number} pageSize Page size
      * @param {Object} res 
      * @returns 
      */
-    async getAllPosts(res) {
+    async getAllPosts(pageNumber, pageSize, res) {
         try {
             console.info('----- In getAllPosts method -----');
-            const getPosts = await Post.find();
+            const getPosts = await Post.find().skip((pageNumber * pageSize) - pageSize).limit(pageSize);
+            const count = await Post.find().countDocuments()
             if (!getPosts) {
                 return res.status(400).json({
                     message: "No Posts to retrieve"
@@ -22,8 +25,10 @@ class PostService {
             }
             
             return res.status(200).json({
-                posts: getPosts,
-                count: Object.keys(getPosts).length
+                comments: getPosts,
+                count: count,
+                page_number: pageNumber,
+                page_size: pageSize
             });
         } catch (err) {
             console.error('****** ERROR FROM getAllPosts METHOD ******', err);

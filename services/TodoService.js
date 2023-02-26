@@ -8,13 +8,16 @@ class TodoService {
 
     /**
      * @description Method responsible for getting all todos
+     * @param {Number} pageNumber page Number
+     * @param {Number} pageSize Page size
      * @param {Object} res 
      * @returns 
      */
-    async getAllTodos(res) {
+    async getAllTodos(pageNumber, pageSize, res) {
         try {
             console.info('----- In getAllTodos method -----');
-            const getTodos = await Todo.find();
+            const getTodos = await Todo.find().skip((pageNumber * pageSize) - pageSize).limit(pageSize);
+            const count = await Todo.find().countDocuments();
             if (!getTodos) {
                 return res.status(400).json({
                     message: "No Todos to retrieve"
@@ -22,8 +25,10 @@ class TodoService {
             }
             
             return res.status(200).json({
-                todos: getTodos,
-                count: Object.keys(getTodos).length
+                comments: getTodos,
+                count: count,
+                page_number: pageNumber,
+                page_size: pageSize
             });
         } catch (err) {
             console.error('****** ERROR FROM getAllTodos METHOD ******', err);

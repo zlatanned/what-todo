@@ -9,13 +9,16 @@ class CommentService {
 
     /**
      * @description Method responsible for getting all comments on a post
+     * @param {String} postID ID of post on which comment will be retrieved
+     * @param {Number} pageNumber page Number
+     * @param {Number} pageSize Page size
      * @param {Object} res 
      * @returns 
      */
-    async getCommentsOnPost(postID, page, limit, res) {
+    async getCommentsOnPost(postID, pageNumber, pageSize, res) {
         try {
             console.info('----- In getCommentsOnPost method -----');
-            const getCommentsOnPost = await Comment.find({ post_id: postID }).skip((page * limit) - limit).limit(limit);
+            const getCommentsOnPost = await Comment.find({ post_id: postID }).skip((pageNumber * pageSize) - pageSize).limit(pageSize);
             const count = await Comment.find({ post_id: postID }).countDocuments()
             if (!getCommentsOnPost) {
                 return res.status(400).json({
@@ -26,8 +29,8 @@ class CommentService {
             return res.status(200).json({
                 comments: getCommentsOnPost,
                 count: count,
-                page_number: page,
-                page_size: limit
+                page_number: pageNumber,
+                page_size: pageSize
             });
         } catch (err) {
             console.error('****** ERROR FROM getCommentsOnPost METHOD ******', err);
