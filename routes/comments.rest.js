@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const CommentService = require('../services/CommentService');
 const auth = require('../middleware/auth');
+const { spamLimiter } = require('../middleware/rateLimit');
 
 /**
  * @author Akshay Shahi
@@ -11,7 +12,7 @@ const auth = require('../middleware/auth');
  * @description     Create a Todo
  * @access          No-auth route
  */
-router.post('/:post_id', auth, (req, res) => {
+router.post('/:post_id', auth, spamLimiter, (req, res) => {
   const commentServiceInst = new CommentService();
   return commentServiceInst.addCommentOnPost(req.params.post_id, req.user.id, req.body, res);
 })
