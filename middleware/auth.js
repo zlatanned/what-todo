@@ -16,6 +16,7 @@ const auth = async (req, res, next) => {
         req.user = decoded;
         next() // pass along to next handler
     } catch (error) {
+        console.error("**** Error from auth middleware ****", error);
         res.status(ErrorConstants.BAD_REQUEST_ERROR_CODE).json({ message: 'Token is not valid' })
     }
 }
