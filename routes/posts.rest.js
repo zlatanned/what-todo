@@ -2,6 +2,7 @@ const router = require('express').Router();
 const PostService = require('../services/PostService');
 const Post = require('../models/Post');
 const auth = require('../middleware/auth');
+const { postCreationLimiter } = require('../middleware/rateLimit');
 
 /**
  * @author Akshay Shahi
@@ -14,7 +15,7 @@ const auth = require('../middleware/auth');
  */
 router.get('/', async (req, res) => {
   const postServiceInst = new PostService();
-  await postServiceInst.getAllPosts(req.query, res);
+  return postServiceInst.getAllPosts(req.query, res);
 });
 
 /**
@@ -22,7 +23,7 @@ router.get('/', async (req, res) => {
  * @description     Create a Post
  * @access          Protected route
  */
-router.post('/', auth, (req, res) => {
+router.post('/', auth, postCreationLimiter, (req, res) => {
   const postServiceInst = new PostService();
   return postServiceInst.createPost(req.user.id, req.body.description, res);
 })
