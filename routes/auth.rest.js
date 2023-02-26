@@ -32,4 +32,15 @@ router.post('/login', async (req, res) => {
     return userServiceInst.loginUser(username, password, res);
 });
 
+/**
+ * @route           POST /refresh-token
+ * @description     Use long-lived refresh token to generate access token
+ * @access          No-auth route
+ */
+router.post('/refresh-token', async (req, res) => {
+    const userServiceInst = new UserService();
+    const postData = req.body;
+    return userServiceInst.getTokenUsingRefreshToken(postData, res);
+});
+
 module.exports = router;
