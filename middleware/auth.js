@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken');
 const secret = process.env.JWT_SECRET;
+const ErrorConstants = require('../utility/constants/ErrorConstants');
 
 const auth = async (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
+    if (!token) return res.status(ErrorConstants.UNAUTHORIZED_ERROR_CODE).json({ message: 'No token, authorization denied' });
     try {
         // Verify token
         const decoded = jwt.verify(token, secret);
@@ -11,7 +12,7 @@ const auth = async (req, res, next) => {
         req.user = decoded;
         next() // pass along to next handler
     } catch (error) {
-        res.status(400).json({ message: 'Token is not valid' })
+        res.status(ErrorConstants.BAD_REQUEST_ERROR_CODE).json({ message: 'Token is not valid' })
     }
 }
 

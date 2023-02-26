@@ -1,5 +1,6 @@
 const Post = require('../models/Post');
 const Utility = require('../utility/Utility');
+const ErrorConstants = require('../utility/constants/ErrorConstants');
 
 /**
  * @author Akshay Shahi
@@ -40,12 +41,12 @@ class PostService {
             const getPosts = await Post.find(filterData).lean().skip((pageNumber * pageSize) - pageSize).limit(pageSize);
             const totalCount = await Post.find().lean().countDocuments()
             if (!getPosts) {
-                return res.status(400).json({
+                return res.status(ErrorConstants.BAD_REQUEST_ERROR_CODE).json({
                     message: "No Posts to retrieve"
                 });
             }
             
-            return res.status(200).json({
+            return res.status(ErrorConstants.SUCCESS_CODE).json({
                 comments: getPosts,
                 total_count: totalCount,
                 page_number: pageNumber,
@@ -53,7 +54,7 @@ class PostService {
             });
         } catch (err) {
             console.error('****** ERROR FROM getAllPosts METHOD ******', err);
-            res.status(500).json(err);
+            res.status(ErrorConstants.INTERNAL_SERVER_ERROR_CODE).json(err);
         }
     }
 
@@ -67,10 +68,10 @@ class PostService {
         try {
             console.info('----- In getPostByID method -----');
             const post = await Post.findById(id);
-            res.status(200).json(post);
+            res.status(ErrorConstants.SUCCESS_CODE).json(post);
         } catch (err) {
             console.error('****** ERROR FROM getPostByID METHOD ******', err);
-            res.status(500).json(err);
+            res.status(ErrorConstants.INTERNAL_SERVER_ERROR_CODE).json(err);
         }
     }
 
@@ -86,17 +87,17 @@ class PostService {
         try {
             console.info('----- In createPost method -----');
             if (!description) {
-                return res.status(400).json({ message: 'Please enter description to create post' });
+                return res.status(ErrorConstants.BAD_REQUEST_ERROR_CODE).json({ message: 'Please enter description to create post' });
             }
 
             const newPost = new Post({ description, created_by: userID });
             await newPost.save();
-            return res.status(200).json({
+            return res.status(ErrorConstants.SUCCESS_CODE).json({
                 message: `Post created successfully with description: ${description}`
             });
         } catch (err) {
             console.error('****** ERROR FROM createPost METHOD ******', err);
-            res.status(500).json(err);
+            res.status(ErrorConstants.INTERNAL_SERVER_ERROR_CODE).json(err);
         }
     }
 
@@ -119,16 +120,16 @@ class PostService {
              *   1. Only Post owner/admin should be able to perform deletion
              */
             if (!post) {
-                return res.status(404).send("Requested Post not found");
+                return res.status(ErrorConstants.NOT_FOUND_ERROR_CODE).send("Requested Post not found");
             }
             if (post.created_by !== userID && userRole === 'member') {
-                return res.status(403).send("Deletion Forbidden! Only post owner/admin can perform this action.");
+                return res.status(ErrorConstants.FORBIDDEN_ERROR_CODE).send("Deletion Forbidden! Only post owner/admin can perform this action.");
             }
             post.remove();
-            res.status(200).json({success: true});
+            res.status(ErrorConstants.SUCCESS_CODE).json({success: true});
         } catch (err) {
             console.error('****** ERROR FROM deletePostByID METHOD ******', err);
-            res.status(500).json(err);
+            res.status(ErrorConstants.INTERNAL_SERVER_ERROR_CODE).json(err);
         }
     }
 
@@ -152,17 +153,17 @@ class PostService {
              *   1. Only post owner/admin should be able to perform update
              */
             if (!post) {
-                return res.status(404).send("Requested POST not found");
+                return res.status(ErrorConstants.NOT_FOUND_ERROR_CODE).send("Requested POST not found");
             }
             if (post.created_by !== userID && userRole === 'member') {
-                return res.status(403).send("Updation Forbidden! Only post owner/admin can perform this action.");
+                return res.status(ErrorConstants.FORBIDDEN_ERROR_CODE).send("Updation Forbidden! Only post owner/admin can perform this action.");
             }
 
             await Post.findByIdAndUpdate({_id: id}, data, {upsert: false});
-            res.status(200).json({ success: true });
+            res.status(ErrorConstants.SUCCESS_CODE).json({ success: true });
         } catch (err) {
             console.error('****** ERROR FROM updatePostByID METHOD ******', err);
-            res.status(500).json(err);
+            res.status(ErrorConstants.INTERNAL_SERVER_ERROR_CODE).json(err);
         }
     }
 }
