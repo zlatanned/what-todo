@@ -2,6 +2,10 @@ const jwt = require('jsonwebtoken');
 const secret = process.env.JWT_SECRET;
 const ErrorConstants = require('../utility/constants/ErrorConstants');
 
+/**
+ * @author Akshay Shahi
+ */
+
 const auth = async (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
     if (!token) return res.status(ErrorConstants.UNAUTHORIZED_ERROR_CODE).json({ message: 'No token, authorization denied' });
