@@ -1,27 +1,31 @@
 const router = require('express').Router();
-const Comments = require('../models/Comment');
+const CommentService = require('../services/CommentService');
+const auth = require('../middleware/auth');
 
 /**
  * @author Akshay Shahi
  */
 
-router.post('/', async (req, res) => {
-  const newCat = new Comments(req.body);
-  try {
-    const savedCat = await newCat.save();
-    res.status(200).json(savedCat);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
+/**
+ * @route           POST /comments/:post_id
+ * @description     Create a Todo
+ * @access          No-auth route
+ */
+router.post('/:post_id', auth, (req, res) => {
+  const commentServiceInst = new CommentService();
+  return commentServiceInst.addCommentOnPost(req.params.post_id, req.user.id, req.body, res);
+})
 
-router.get('/', async (req, res) => {
-    try {
-      const cats = await Comments.find();
-      res.status(200).json(cats);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  });
+/**
+* @route           GET /comments/:post_id
+* @description     Get a Todo
+* @access          No-Auth route
+*/
+router.get('/:post_id', async (req, res) => {
+  const commentServiceInst = new CommentService();
+  let page = req.query.page ?? 1;
+  let limit = req.query.limit ?? 10;
+  return commentServiceInst.getCommentsOnPost(req.params.post_id, page, limit, res);
+});
 
 module.exports = router;

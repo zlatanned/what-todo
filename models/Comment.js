@@ -6,9 +6,15 @@ const mongoose = require('mongoose');
 
 const CommentSchema = new mongoose.Schema(
   {
-    content: {
+    comment: {
       type: String,
       required: true
+    },
+    post_id: {
+      type: String
+    },
+    created_by: {
+      type: String
     }
   },
   { timestamps: true }
