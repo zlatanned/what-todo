@@ -1,100 +1,60 @@
 const router = require('express').Router();
-const User = require('../models/User');
+const PostService = require('../services/PostService');
 const Post = require('../models/Post');
+const auth = require('../middleware/auth');
 
 /**
  * @author Akshay Shahi
  */
 
-//CREATE POST
-router.post('/', async (req, res) => {
-  try {
-    const newPost = new Post(req.body);
-    if (!(req.body.username && req.body.title && req.body.description)) {
-      res.status(400).json('Bad Request!');
-    }
-    const savedPost = await newPost.save();
-    res.status(200).json(savedPost);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-//UPDATE POST
-router.put('/:id', async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (post.username === req.body.username) {
-      try {
-        const updatedPost = await Post.findByIdAndUpdate(
-          req.params.id,
-          {
-            $set: req.body,
-          },
-          { new: true }
-        );
-        res.status(200).json(updatedPost);
-      } catch (err) {
-        res.status(500).json(err);
-      }
-    } else {
-      res.status(401).json('You can update only your post!');
-    }
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-//DELETE POST
-router.delete('/:id', async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (post.username === req.body.username) {
-      try {
-        await post.delete();
-        res.status(200).json('Post has been deleted...');
-      } catch (err) {
-        res.status(500).json(err);
-      }
-    } else {
-      res.status(401).json('You can delete only your post!');
-    }
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-//GET POST
-router.get('/:id', async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    res.status(200).json(post);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-//GET ALL POSTS
+/**
+ * @route           GET /posts
+ * @description     Get all posts
+ * @access          No-auth route
+ */
 router.get('/', async (req, res) => {
-  const username = req.query.user;
-  const catName = req.query.cat;
-  try {
-    let posts;
-    if (username) {
-      posts = await Post.find({ username });
-    } else if (catName) {
-      posts = await Post.find({
-        categories: {
-          $in: [catName],
-        },
-      });
-    } else {
-      posts = await Post.find();
-    }
-    res.status(200).json(posts);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+  const postServiceInst = new PostService();
+  await postServiceInst.getAllPosts(res);
+});
+
+/**
+ * @route           POST /posts
+ * @description     Create a Post
+ * @access          Protected route
+ */
+router.post('/', auth, (req, res) => {
+  const postServiceInst = new PostService();
+  return postServiceInst.createPost(req.user.id, req.body.description, res);
+})
+
+/**
+ * @route           PATCH /posts/:id
+ * @description     Update a Post
+ * @access          Protected route
+ */
+router.patch('/:id', auth, (req, res) => {
+  const postServiceInst = new PostService();
+  return postServiceInst.updatePostByID(req.user.id, req.user.role, req.params.id, req.body, res);
+})
+
+/**
+ * @route           DELETE /posts/:id
+ * @description     Delete a Post
+ * @access          Protected route
+ */
+router.delete('/:id', auth, (req, res) => {
+  const postServiceInst = new PostService();
+  return postServiceInst.deletePostByID(req.user.id, req.user.role, req.params.id, res);
+})
+
+/**
+ * @route           GET /posts/:id
+ * @description     Get a Post
+ * @access          No-Auth route
+ */
+router.get('/:id', async (req, res) => {
+  const postServiceInst = new PostService();
+  return postServiceInst.getPostByID(req.params.id, res);
 });
 
 module.exports = router;
