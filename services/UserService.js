@@ -18,23 +18,29 @@ class UserService {
      * @param {Object} res 
      * @returns 
      */
-    async signUpUser(username, email, password, res) {
+    async signUpUser(username, email, password, role, res) {
         try {
             console.info('----- In SIGNUP method -----');
+            //Role Check
+            if (role !== 'admin' && role !== 'member') {
+                return res.status(ErrorConstants.BAD_REQUEST_ERROR_CODE).json({
+                    message: 'Invalid Role Type'
+                });
+            }
             const salt = await bcrypt.genSalt(10);
             const hashedPass = await bcrypt.hash(password, salt);
             const newUser = new User({
                 username: username,
                 email: email,
                 password: hashedPass,
+                role: role
             });
 
             const userAlreadyExists = await User.findOne({ username });
             if (userAlreadyExists) {
-                res.status(ErrorConstants.BAD_REQUEST_ERROR_CODE).json({
+                return res.status(ErrorConstants.BAD_REQUEST_ERROR_CODE).json({
                     message: 'User already exists. Please Login directly.'
                 });
-                return false;
             }
 
             //saving new user in database

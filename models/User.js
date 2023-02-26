@@ -20,7 +20,8 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "member"
+      enum: ['admin', 'member'],
+      default: 'member'
     }
   },
   { timestamps: true }

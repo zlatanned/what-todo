@@ -16,7 +16,8 @@ const bcrypt = require('bcrypt');
 router.post('/user', async (req, res) => {
     const userServiceInst = new UserService();
     const { username, email, password } = req.body;
-    return userServiceInst.signUpUser(username, email, password, res);
+    const role = (req.body.role) ? req.body.role : 'member';
+    return userServiceInst.signUpUser(username, email, password, role, res);
 });
 
 /**

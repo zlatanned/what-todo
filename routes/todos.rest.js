@@ -43,7 +43,6 @@ router.get('/:id', async (req, res) => {
  */
 router.delete('/:id', auth, (req, res) => {
     const todoServiceInst = new TodoService();
-    console.log(req.user);
     return todoServiceInst.deleteTodoByID(req.user.id, req.user.role, req.params.id, res);
 })
 
@@ -54,7 +53,6 @@ router.delete('/:id', auth, (req, res) => {
  */
 router.patch('/:id', auth, (req, res) => {
     const todoServiceInst = new TodoService();
-    console.log(req.user);
     return todoServiceInst.updateTodoByID(req.user.id, req.user.role, req.params.id, req.body, res);
 })
 
