@@ -2,6 +2,7 @@ const router = require('express').Router();
 const User = require('../models/User');
 const UserService = require('../services/UserService');
 const bcrypt = require('bcrypt');
+const { signUpLimiter } = require('../middleware/rateLimit');
 
 /**
  * @author Akshay Shahi
@@ -13,7 +14,7 @@ const bcrypt = require('bcrypt');
  * @description     SIGNUP USER
  * @access          No-auth route
  */
-router.post('/user', async (req, res) => {
+router.post('/user', signUpLimiter, async (req, res) => {
     const userServiceInst = new UserService();
     const { username, email, password } = req.body;
     const role = (req.body.role) ? req.body.role : 'member';
