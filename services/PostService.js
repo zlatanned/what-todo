@@ -47,7 +47,7 @@ class PostService {
             }
             
             return res.status(ErrorConstants.SUCCESS_CODE).json({
-                comments: getPosts,
+                posts: getPosts,
                 total_count: totalCount,
                 page_number: pageNumber,
                 page_size: pageSize

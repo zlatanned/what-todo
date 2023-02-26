@@ -140,7 +140,7 @@ class UserService {
                     JWT_SECRET,
                     { expiresIn: 900 }
                 );
-                tokenStore[postData.refresh_token].token = token;
+                [postData.refresh_token].token = token;tokenStore
                 return res.status(ErrorConstants.SUCCESS_CODE).json({ token });
             } else {
                 return res.status(ErrorConstants.NOT_FOUND_ERROR_CODE).json({

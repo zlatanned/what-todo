@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:coverage": "jest --config jest.config.json --coverage",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -17,6 +19,10 @@
     "url": "https://github.com/zlatanned/what-todo/issues"
   },
   "homepage": "https://github.com/zlatanned/what-todo#readme",
+  "devDependencies": {
+    "@types/jest": "^27.4.0",
+    "jest": "^28.1.1"
+  },
   "dependencies": {
     "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
