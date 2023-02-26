@@ -46,7 +46,7 @@ class TodoService {
             }
             
             return res.status(ErrorConstants.SUCCESS_CODE).json({
-                comments: getTodos,
+                todos: getTodos,
                 total_count: totalCount,
                 page_number: pageNumber,
                 page_size: pageSize

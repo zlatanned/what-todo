@@ -1,0 +1,14 @@
+{
+    "coverageThreshold": {
+        "global": {
+            "branches": 90,
+            "functions": 90,
+            "lines": 90,
+            "statements": 90
+        }
+    },
+    "collectCoverageFrom": ["services/*/**"],
+    "testTimeout": 10000,
+    "testMatch": ["**/**.spec.js"],
+    "setupFilesAfterEnv": ["./jest.setup.js"]
+}
