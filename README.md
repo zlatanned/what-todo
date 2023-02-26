@@ -2,6 +2,27 @@
 
 > A social media app with todo lists.<br />
 
+## Steps to run the application
+
+0. Clone the repository and navigate to the cloned folder
+1. Install node_modules
+```sh
+npm i
+```
+
+2. Add a .env file to root directory and give appropriate values:
+```sh
+MONGO_URI=
+PORT=
+JWT_SECRET=
+REFRESH_TOKEN_SECRET=
+```
+
+3. We are now all set to start our application, run the followind command:
+```sh
+npm start
+```
+
 ## ✨ Objective
 <p align="center">USER - Signup & Login</p>
 <p align="center">TODO - Create, Manage their TODOs & view others' todos</p>
