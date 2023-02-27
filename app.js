@@ -30,7 +30,6 @@ mongoose
 mongoose.Promise = global.Promise;
 
 // Use middleware to set up routes
-app.use('/api/users/', users);
 app.use('/api/posts/', posts);
 app.use('/api', authRoutes);
 app.use('/api/comments', commentsRoute);

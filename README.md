@@ -42,6 +42,37 @@ npm start
 <p align="center">APIdocs can be added at the route layer</p>
 <p align="center">OAuth2.0 can be added at the auth layer</p>
 
+## Endpoints exposed
+
+0. USER endpoints:
+```sh
+SIGNUP - POST /api/user/
+LOGIN - POST /api/login/
+```
+
+1. TODO endpoints:
+```sh
+CREATE TODO - POST /api/todo/
+GET ALL TODOS - GET /api/todo/  (SUPPORTS PAGINATION & QUERYING/FILTERING)
+GET TODO BY ID - GET /api/todo/:id
+UPDATE TODO BY ID - PATCH /api/todo/:id
+DELETE TODO BY ID - DELETE /api/todo/:id
+```
+
+2. POST endpoints:
+```sh
+CREATE POST - POST /api/posts/
+GET ALL POSTS - GET /api/posts/  (SUPPORTS PAGINATION & QUERYING/FILTERING)
+GET POST BY ID - GET /api/posts/:id
+UPDATE POST BY ID - PATCH /api/posts/:id
+DELETE POST BY ID - DELETE /api/posts/:id
+```
+
+3. COMMENT endpoints:
+```sh
+ADD COMMENTS TO A POST BY POST ID- POST /api/comments/:post_id
+GET COMMENTS BY POST ID- GET /api/comments/:post_id  (SUPPORTS PAGINATION & QUERYING/FILTERING)
+```
 ## Show your support
 
 Please ⭐️ this repository if you liked this project!
