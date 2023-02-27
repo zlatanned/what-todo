@@ -1,7 +1,6 @@
 const express = require('express');
 require('dotenv').config(); // for loading environment variables
 const mongoose = require('mongoose');
-const users = require('./routes/users.rest');
 const posts = require('./routes/posts.rest');
 const authRoutes = require('./routes/auth.rest');
 const commentsRoute = require('./routes/comments.rest');
